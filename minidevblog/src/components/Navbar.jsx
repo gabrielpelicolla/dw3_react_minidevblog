@@ -1,14 +1,40 @@
 import React from 'react'
 import styles from './Navbar.module.css'
-
+import { NavLink, useNavigate } from 'react-router-dom'
+import { userAuthentication } from '../hooks/userAuthentication'
+import { useAuthValue } from '../context/AuthContext'
 
 const Navbar = () => {
+  const { user } = useAuthValue()
+  const { logout } = userAuthentication()
+  const navigate = useNavigate()
 
   return (
     <>
       <nav className={styles.navbar}>
-         <div className={styles.brand}>MiniBlog <span >Dev</span></div>
+        <NavLink to={'/'} className={styles.brand}>
+          MiniBlog <span >Dev</span>
+        </NavLink>
       </nav>
+      <ul className={styles.links_list}>
+        <li>
+          <NavLink to={'/'} className={({isActive}) => (isActive ? styles.active : null)}>
+            Home
+          </NavLink>
+        </li>
+        {!user && (
+          <>
+            <li>
+              <NavLink to={'/login'} className={({isActive}) => (isActive ? styles.active : null)}>
+                Login
+              </NavLink>
+            </li>
+          </>
+        )}
+        {user && (
+          <button className={styles.logout} onClick={logout}>Exit</button>
+        )}
+      </ul>
     </>
   )
 }
